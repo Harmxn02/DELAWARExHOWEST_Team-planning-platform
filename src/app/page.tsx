@@ -11,7 +11,15 @@ export default function Home() {
 		isAvailable: boolean;
 	}
 
+	interface Project {
+		id: number;
+		projectTitle: string;
+		dateStarted: string;
+		isActive: boolean;
+	}
+
 	const [employees, setEmployees] = useState<Employee[]>([]);
+	const [projects, setProjects] = useState<Project[]>([]);
 
 	useEffect(() => {
 		const fetchEmployees = async () => {
@@ -26,7 +34,20 @@ export default function Home() {
 			}
 		};
 
+		const fetchProjects = async () => {
+			try {
+				const data = await fetch("/api/projects");
+				const response = await data.json();
+
+				setProjects(response.projects);
+				console.log(response.projects);
+			} catch (error) {
+				console.error(error);
+			}
+		};
+
 		fetchEmployees();
+		fetchProjects();
 	}, []);
 
 	return (
@@ -49,6 +70,28 @@ export default function Home() {
 								<td>{employee.lastname}</td>
 								<td>{employee.email}</td>
 								<td>{employee.isAvailable ? "✅" : "❌"}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</div>
+
+			<div>
+				<h1 className="text-4xl font-bold mb-5">Projects</h1>
+				<table>
+					<thead>
+						<tr>
+							<th className="text-left min-w-[250px]">Project Title</th>
+							<th className="text-left min-w-[300px]">Date started</th>
+							<th className="text-left min-w-[150px]">Is active</th>
+						</tr>
+					</thead>
+					<tbody>
+						{projects.map((project) => (
+							<tr key={project.id}>
+								<td>{project.projectTitle}</td>
+								<td>{new Date(project.dateStarted).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
+								<td>{project.isActive ? "✅" : "❌"}</td>
 							</tr>
 						))}
 					</tbody>
