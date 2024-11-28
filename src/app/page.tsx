@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
+import React from "react";
 
 export default function Home() {
 	interface Employee {
@@ -8,6 +9,7 @@ export default function Home() {
 		firstname: string;
 		lastname: string;
 		email: string;
+		role: string;
 		isAvailable: boolean;
 	}
 
@@ -75,14 +77,14 @@ export default function Home() {
 	return (
 		<div className="m-10 space-y-20">
 			<div>
-				<h1 className="text-4xl font-bold mb-5">Employees (GET)</h1>
+				<h1 className="text-4xl font-bold mb-5">Available Employees (GET)</h1>
 				<table>
 					<thead>
 						<tr>
 							<th className="text-left min-w-[150px]">First Name</th>
 							<th className="text-left min-w-[150px]">Last Name</th>
 							<th className="text-left min-w-[300px]">Email</th>
-							<th className="text-left min-w-[150px]">Availability</th>
+							<th className="text-left min-w-[200px]">Role</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -91,7 +93,7 @@ export default function Home() {
 								<td>{employee.firstname}</td>
 								<td>{employee.lastname}</td>
 								<td>{employee.email}</td>
-								<td>{employee.isAvailable ? "✅" : "❌"}</td>
+								<td>{employee.role}</td>
 							</tr>
 						))}
 					</tbody>
