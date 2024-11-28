@@ -41,6 +41,16 @@ export default function Home() {
 			const response = await data.json();
 
 			console.log(response);
+
+			// Optionally refetch projects to update list
+			const fetchProjects = async () => {
+				const data = await fetch("/api/projects");
+				const response = await data.json();
+				setProjects(response.projects);
+			};
+			fetchProjects();
+
+
 		} catch (error) {
 			console.error(error);
 		}
@@ -256,10 +266,10 @@ export default function Home() {
 							};
 							await fetchEmployees();
 			
-							alert("Project deleted successfully!");
+							alert("Project closed successfully!");
 						} catch (error) {
 							console.error(error);
-							alert("Failed to delete project!");
+							alert("Failed to close project!");
 						}
 					}}
 				>
