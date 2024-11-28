@@ -29,3 +29,28 @@ export async function POST(request) {
 		return NextResponse.json({ error: error.message });
 	}
 }
+
+export async function DELETE(request) {
+	try {
+		// Get the search parameters from the request
+		const { searchParams } = new URL(request.url);
+		const projectTitle = searchParams.get("projectTitle");
+
+		if (!projectTitle) {
+			return NextResponse.json({ error: "Project title is required" }, { status: 400 });
+		}
+
+		const db = await createConnection();
+		const sql = "UPDATE projects SET isActive = FALSE WHERE projectTitle = ?";
+		const [result] = await db.query(sql, [projectTitle]);
+
+		if (result.affectedRows === 0) {
+			return NextResponse.json({ error: "Project not found or already inactive" }, { status: 404 });
+		}
+
+		return NextResponse.json({ message: "Project marked as inactive successfully", result });
+	} catch (error) {
+		console.error(error);
+		return NextResponse.json({ error: error.message }, { status: 500 });
+	}
+}

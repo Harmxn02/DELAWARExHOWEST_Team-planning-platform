@@ -218,6 +218,67 @@ export default function Home() {
 					</button>
 				</form>
 			</div>
+
+			<div>
+				<h1 className="text-4xl font-bold mb-5">Close Project (DELETE)</h1>
+				<form
+					onSubmit={async (e) => {
+						e.preventDefault();
+						const formData = new FormData(e.target as HTMLFormElement);
+						const projectTitle = formData.get("projectTitle") as string;
+						
+						if (!projectTitle) {
+							alert("Please select a project!");
+							return;
+						}
+
+						try {
+							// Send DELETE request with projectTitle as a query parameter
+							const response = await fetch(`/api/projects?projectTitle=${encodeURIComponent(projectTitle)}`, {
+								method: "DELETE",
+							});
+							const result = await response.json();
+							console.log(result);
+			
+							// Optionally refetch projects to update list
+							const fetchProjects = async () => {
+								const data = await fetch("/api/projects");
+								const response = await data.json();
+								setProjects(response.projects);
+							};
+							await fetchProjects();
+
+							// Optionally refetch employees to update availability
+							const fetchEmployees = async () => {
+								const data = await fetch("/api/employees");
+								const response = await data.json();
+								setEmployees(response.employees);
+							};
+							await fetchEmployees();
+			
+							alert("Project deleted successfully!");
+						} catch (error) {
+							console.error(error);
+							alert("Failed to delete project!");
+						}
+					}}
+				>
+					<label htmlFor="projectTitle" className="block mb-2">
+						Project Title
+					</label>
+					<select id="projectTitle" name="projectTitle" className="w-full border border-gray-300 rounded p-2 mb-5">
+						<option value="">Select Project</option>
+						{projects.map((project) => (
+							<option key={project.id} value={project.projectTitle}>
+								{project.projectTitle}
+							</option>
+						))}
+					</select>
+					<button type="submit" className="bg-red-500 text-white rounded px-3 py-2">
+						Close Project
+					</button>
+				</form>
+			</div>
 		</div>
 	);
 }
