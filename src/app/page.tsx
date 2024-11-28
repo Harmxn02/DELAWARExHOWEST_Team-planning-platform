@@ -131,8 +131,7 @@ export default function Home() {
 				<table>
 					<thead>
 						<tr>
-							<th className="text-left min-w-[150px]">First Name</th>
-							<th className="text-left min-w-[150px]">Last Name</th>
+							<th className="text-left min-w-[150px]">Name</th>
 							<th className="text-left min-w-[300px]">Email</th>
 							<th className="text-left min-w-[200px]">Role</th>
 							<th className="text-left min-w-[200px]">Assign to Project</th>
@@ -142,8 +141,7 @@ export default function Home() {
 					<tbody>
 						{employees.map((employee) => (
 							<tr key={employee.id}>
-								<td>{employee.firstname}</td>
-								<td>{employee.lastname}</td>
+								<td>{employee.lastname.toUpperCase() + ", " + employee.firstname}</td>
 								<td>{employee.email}</td>
 								<td>{employee.role}</td>
 								<td>
