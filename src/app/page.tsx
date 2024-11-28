@@ -21,6 +21,28 @@ export default function Home() {
 	const [employees, setEmployees] = useState<Employee[]>([]);
 	const [projects, setProjects] = useState<Project[]>([]);
 
+	const addProjectToDatabase = async ({ projectTitle }: { projectTitle: string }) => {
+		try {
+			const formattedDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Format as 'YYYY-MM-DD HH:mm:ss'
+			const data = await fetch("/api/projects", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({
+					projectTitle: projectTitle,
+					dateStarted: formattedDate,
+					isActive: true,
+				}),
+			});
+			const response = await data.json();
+
+			console.log(response);
+		} catch (error) {
+			console.error(error);
+		}
+	}
+
 	useEffect(() => {
 		const fetchEmployees = async () => {
 			try {
@@ -53,7 +75,7 @@ export default function Home() {
 	return (
 		<div className="m-10 space-y-20">
 			<div>
-				<h1 className="text-4xl font-bold mb-5">Employees</h1>
+				<h1 className="text-4xl font-bold mb-5">Employees (GET)</h1>
 				<table>
 					<thead>
 						<tr>
@@ -77,7 +99,7 @@ export default function Home() {
 			</div>
 
 			<div>
-				<h1 className="text-4xl font-bold mb-5">Projects</h1>
+				<h1 className="text-4xl font-bold mb-5">Projects (GET)</h1>
 				<table>
 					<thead>
 						<tr>
@@ -96,6 +118,28 @@ export default function Home() {
 						))}
 					</tbody>
 				</table>
+			</div>
+
+			<div>
+				<h1 className="text-4xl font-bold mb-5">Add Project (POST)</h1>
+				<form
+					onSubmit={(e) => {
+						e.preventDefault();
+						const formData = new FormData(e.target as HTMLFormElement);
+						const projectTitle = formData.get("projectTitle") as string;
+
+						addProjectToDatabase({ projectTitle });
+					}}
+				>
+					<label htmlFor="projectTitle" className="block mb-2">
+						Project Title
+					</label>
+					<input type="text" id="projectTitle" name="projectTitle" className="w-full border border-gray-300 rounded p-2 mb-5" />
+
+					<button type="submit" className="bg-blue-500 text-white rounded px-3 py-2">
+						Add Project
+					</button>
+				</form>
 			</div>
 		</div>
 	);
