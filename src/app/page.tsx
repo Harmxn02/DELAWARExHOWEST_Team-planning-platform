@@ -22,6 +22,7 @@ export default function Home() {
 
 	const [employees, setEmployees] = useState<Employee[]>([]);
 	const [projects, setProjects] = useState<Project[]>([]);
+	const [selectedProjects, setSelectedProjects] = useState<{ [key: number]: number }>({});
 
 	const addProjectToDatabase = async ({ projectTitle }: { projectTitle: string }) => {
 		try {
@@ -74,6 +75,55 @@ export default function Home() {
 		fetchProjects();
 	}, []);
 
+
+	// Handle project selection
+	const handleProjectSelect = (employeeId: number, projectId: number) => {
+		setSelectedProjects((prev) => ({
+			...prev,
+			[employeeId]: projectId,
+		}));
+	};
+
+	// Handle assignment
+	const assignProject = async (employeeId: number) => {
+		const projectId = selectedProjects[employeeId];
+		if (!projectId) {
+			alert("Please select a project!");
+			return;
+		}
+
+		try {
+			const response = await fetch("/api/project_assignments", {
+				method: "POST",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ employeeId, projectId }),
+			});
+
+			const result = await response.json();
+			console.log(result);
+
+			// Optionally refetch employees to update availability
+			const fetchEmployees = async () => {
+				const data = await fetch("/api/employees");
+				const response = await data.json();
+				setEmployees(response.employees);
+			};
+			fetchEmployees();
+
+			alert("Project assigned successfully!");
+		} catch (error) {
+			console.error(error);
+			alert("Failed to assign project!");
+		}
+	};
+
+
+
+
+
+
 	return (
 		<div className="m-10 space-y-20">
 			<div>
@@ -85,6 +135,8 @@ export default function Home() {
 							<th className="text-left min-w-[150px]">Last Name</th>
 							<th className="text-left min-w-[300px]">Email</th>
 							<th className="text-left min-w-[200px]">Role</th>
+							<th className="text-left min-w-[200px]">Assign to Project</th>
+							<th className="text-left min-w-[150px]">Action</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -94,6 +146,32 @@ export default function Home() {
 								<td>{employee.lastname}</td>
 								<td>{employee.email}</td>
 								<td>{employee.role}</td>
+								<td>
+									<select
+										name="project"
+										title="project"
+										value={selectedProjects[employee.id] || ""}
+										onChange={(e) => handleProjectSelect(employee.id, Number(e.target.value))}
+										className="border border-gray-300 rounded p-2"
+										disabled={!employee.isAvailable} // Disable if employee is unavailable
+									>
+										<option value="">Select Project</option>
+										{projects.map((project) => (
+											<option key={project.id} value={project.id}>
+												{project.projectTitle}
+											</option>
+										))}
+									</select>
+								</td>
+								<td>
+									<button
+										onClick={() => assignProject(employee.id)}
+										className="bg-blue-500 text-white rounded px-3 py-2"
+										disabled={!employee.isAvailable} // Disable if employee is unavailable
+									>
+										Confirm
+									</button>
+								</td>
 							</tr>
 						))}
 					</tbody>
