@@ -163,6 +163,7 @@ export default function Home() {
 								</td>
 								<td>
 									<button
+										type="button"
 										onClick={() => assignProject(employee.id)}
 										className="bg-blue-500 text-white rounded px-3 py-2"
 										disabled={!employee.isAvailable} // Disable if employee is unavailable
@@ -177,13 +178,12 @@ export default function Home() {
 			</div>
 
 			<div>
-				<h1 className="text-4xl font-bold mb-5">Projects (GET)</h1>
+				<h1 className="text-4xl font-bold mb-5">Active Projects (GET)</h1>
 				<table>
 					<thead>
 						<tr>
 							<th className="text-left min-w-[250px]">Project Title</th>
-							<th className="text-left min-w-[300px]">Date started</th>
-							<th className="text-left min-w-[150px]">Is active</th>
+							<th className="text-left min-w-[200px]">Date started</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -191,7 +191,6 @@ export default function Home() {
 							<tr key={project.id}>
 								<td>{project.projectTitle}</td>
 								<td>{new Date(project.dateStarted).toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" })}</td>
-								<td>{project.isActive ? "✅" : "❌"}</td>
 							</tr>
 						))}
 					</tbody>
