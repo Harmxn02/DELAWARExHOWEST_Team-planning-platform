@@ -116,11 +116,17 @@ export default function Home() {
 
 			// Optionally refetch employees to update availability
 			const fetchEmployees = async () => {
-				const data = await fetch("/api/employees");
-				const response = await data.json();
-				setEmployees(response.employees);
+				try {
+					const data = await fetch("/api/employees");
+					const response = await data.json();
+					setEmployees(response.employees);
+					
+				} catch (error) {
+					console.error("Failed to fetch employees after assignment", error);
+				}
 			};
-			fetchEmployees();
+			
+			await fetchEmployees();
 
 			alert("Project assigned successfully!");
 		} catch (error) {
